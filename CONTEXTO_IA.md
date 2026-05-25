@@ -13,12 +13,9 @@
 * Nombramiento de variables en *camelCase*. Nombramiento de ramas en Git: `feat/nombre`, `fix/nombre`.
 
 ## 3. Registro de Cambios Activos (Ledger)
-* **[2026-05-24] - Manu:** Repositorio inicializado. `application.properties` configurado. Estructura de paquetes base creada.
-* **[2026-05-24] - Manu/Eric/Rodri:** Creada la entidad `EmergenciaConsolidada` en el paquete `model`. Se aplicó el workaround técnico de asignar `@Id` a la columna `estado` para cumplir con las validaciones de compilación de JPA, garantizando que el framework no bloquee la ejecución al leer el Data Mart.
+* **[2026-05-24] - Manu:** Repositorio inicializado. `application.properties` configurado con reglas estrictas de validación. Estructura de paquetes base creada.
+* **[2026-05-24] - Célula Backend:** Entidad `EmergenciaConsolidada` creada (Workaround: `@Id` en columna `estado`).
+* **[2026-05-24] - Célula Backend:** Interfaces de Proyección creadas (`SaturacionEstadoProjection`, `ProporcionNacionalProjection`, `TendenciaHistoricaProjection`) para optimizar el mapeo de memoria en respuestas JSON.
 
 ## 4. Tarea Actual
-Implementar el patrón de Proyecciones (Interfaces) en lugar de DTOs tradicionales para optimizar el consumo de memoria al mapear los resultados de las funciones de agregación (SUM, COUNT) provenientes de las consultas nativas. Posteriormente, construir la capa Repository.
-* **[2026-05-24] - Manu:** Repositorio inicializado. `application.properties` configurado. Estructura de paquetes base creada (`controller`, `repository`, `projection`, `model`). Pendiente: Crear la clase `@Entity` para mapear la tabla `emergencias_nacionales_consolidado` y escribir los tres Endpoints de lectura.
-
-## 4. Tarea Actual
-[El desarrollador describirá aquí brevemente el objetivo actual antes de pasarlo al prompt, ej: "Necesito implementar la interfaz de proyección y el repositorio para el KPI de Saturación"].
+Implementar la capa de acceso a datos (`EmergenciaRepository`) utilizando `@Query(nativeQuery = true)` para inyectar los scripts SQL que cruzan la información de delitos y accidentes viales. Posteriormente, construir la capa de presentación REST (`EmergenciaController`) con habilitación estricta de CORS.
