@@ -13,8 +13,11 @@
 * Nombramiento de variables en *camelCase*. Nombramiento de ramas en Git: `feat/nombre`, `fix/nombre`.
 
 ## 3. Registro de Cambios Activos (Ledger)
-*(Añadir aquí el log de lo que se acaba de implementar para que la IA sepa en qué punto estamos)*
+* **[2026-05-24] - Manu:** Repositorio inicializado. `application.properties` configurado. Estructura de paquetes base creada.
+* **[2026-05-24] - Manu/Eric/Rodri:** Creada la entidad `EmergenciaConsolidada` en el paquete `model`. Se aplicó el workaround técnico de asignar `@Id` a la columna `estado` para cumplir con las validaciones de compilación de JPA, garantizando que el framework no bloquee la ejecución al leer el Data Mart.
 
+## 4. Tarea Actual
+Implementar el patrón de Proyecciones (Interfaces) en lugar de DTOs tradicionales para optimizar el consumo de memoria al mapear los resultados de las funciones de agregación (SUM, COUNT) provenientes de las consultas nativas. Posteriormente, construir la capa Repository.
 * **[2026-05-24] - Manu:** Repositorio inicializado. `application.properties` configurado. Estructura de paquetes base creada (`controller`, `repository`, `projection`, `model`). Pendiente: Crear la clase `@Entity` para mapear la tabla `emergencias_nacionales_consolidado` y escribir los tres Endpoints de lectura.
 
 ## 4. Tarea Actual
