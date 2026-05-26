@@ -4,7 +4,7 @@ Este repositorio contiene el servidor backend desarrollado en Java y Spring Boot
 
 ## Equipo de Desarrollo (Célula Backend)
 * **Manuel Hernández Soriano** - Tech Lead / Arquitectura y Base de Datos
-* **García Gallegos Eric** - Desarrollo Backend
+* **Eric García Gallegos** - Desarrollo Backend
 * **Rodrigo Candelaria Velazquez** - Desarrollo Backend
 
 *(Nota: La aplicación cliente está siendo desarrollada en un repositorio separado por el equipo de Frontend: Jenny, Angel y Baruc).*
