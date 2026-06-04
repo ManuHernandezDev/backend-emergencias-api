@@ -1,4 +1,4 @@
-# 🚨 API REST: Sistema de Inteligencia y Soporte a Decisiones para Emergencias Nacionales
+# API REST: Sistema de Inteligencia y Soporte a Decisiones para Emergencias Nacionales
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![Java](https://img.shields.io/badge/Java-17%2B-ED8B00?logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -36,23 +36,23 @@ Este repositorio contiene la **Célula Backend** del proyecto, implementada como
 ---
 
 
-## 🏗️ Arquitectura del Backend
+## Arquitectura del Backend
 
 El backend sigue un patrón **MVC Simplificado y Optimizado** diseñado para minimizar el consumo de memoria ante consultas analíticas complejas mediante el uso de **Spring Data JPA Projections** e inyección directa de consultas nativas (`nativeQuery = true`).
 
 ```mermaid
 graph TD
-    Client[📱 Flutter Client] -->|HTTP Request| Controller[🎮 EmergenciaController]
-    Controller -->|Query Params| Repo[🗄️ EmergenciaRepository]
-    Repo -->|SQL Query Nativo| DB[(🐘 PostgreSQL Datamart)]
-    DB -->|Result Set| Projection[📐 JPA Projections / Maps]
+    Client[Flutter Client] -->|HTTP Request| Controller[EmergenciaController]
+    Controller -->|Query Params| Repo[EmergenciaRepository]
+    Repo -->|SQL Query Nativo| DB[(PostgreSQL Datamart)]
+    DB -->|Result Set| Projection[JPA Projections / Maps]
     Projection -->|Response Mapping| Controller
     Controller -->|JSON Response / PDF File| Client
 ```
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
 * **Lenguaje:** openJDK Java 17 o superior.
 * **Framework:** Spring Boot 3.x (Spring WebMVC, Spring Data JPA).
@@ -62,31 +62,31 @@ graph TD
 
 ---
 
-## 📂 Estructura de Paquetes
+## Estructura de Paquetes
 
 ```
 src/main/java/com/example/apiemergencias/
 │
-├── ☕ ApiEmergenciasApplication.java   # Clase de arranque (Application Entrypoint)
+├── ApiEmergenciasApplication.java   # Clase de arranque (Application Entrypoint)
 │
-├── 📂 controller/
-│   └── 📄 EmergenciaController.java      # Controlador REST & API Endpoints & Reporte PDF
+├── controller/
+│   └── EmergenciaController.java      # Controlador REST & API Endpoints & Reporte PDF
 │
-├── 📂 model/
-│   └── 📄 EmergenciaConsolidada.java     # Entidad JPA para la tabla consolidada
+├── model/
+│   └── EmergenciaConsolidada.java     # Entidad JPA para la tabla consolidada
 │
-├── 📂 projection/                        # Interfaces para optimización de mapeo SQL
-│   ├── 📄 ProporcionNacionalProjection.java
-│   ├── 📄 SaturacionEstadoProjection.java
-│   └── 📄 TendenciaHistoricaProjection.java
+├── projection/                        # Interfaces para optimización de mapeo SQL
+│   ├── ProporcionNacionalProjection.java
+│   ├── SaturacionEstadoProjection.java
+│   └── TendenciaHistoricaProjection.java
 │
-└── 📂 repository/
-    └── 📄 EmergenciaRepository.java      # Consultas nativas avanzadas (Filtros dinámicos)
+└── repository/
+    └── EmergenciaRepository.java      # Consultas nativas avanzadas (Filtros dinámicos)
 ```
 
 ---
 
-## 🗄️ Mapeo del Data Mart
+## Mapeo del Data Mart
 
 El backend se conecta a la tabla física `emergencias_nacionales_consolidado` del pipeline ETL sin permisos de escritura ni modificación de esquemas.
 
@@ -114,7 +114,7 @@ public class EmergenciaConsolidada {
 
 ---
 
-## 🚀 Configuración y Ejecución Local
+## Configuración y Ejecución Local
 
 ### Paso 1: Clonar el repositorio
 ```bash
@@ -149,7 +149,7 @@ El servidor web arrancará en el puerto por defecto: `http://localhost:8080`.
 
 ---
 
-## 📡 Contratos de API (Endpoints)
+## Contratos de API (Endpoints)
 
 Todos los endpoints incorporan la anotación `@CrossOrigin(origins = "*")` para permitir el consumo inmediato desde simuladores o dispositivos móviles con Flutter sin restricciones de CORS.
 
@@ -298,7 +298,7 @@ Compila al vuelo toda la información analítica de los KPIs e inyecta los resul
 
 ---
 
-## 🔧 Solución de Problemas (Troubleshooting)
+## Solución de Problemas (Troubleshooting)
 
 ### 1. Error de conexión a la base de datos (PostgreSQL)
 Si al arrancar el backend recibes un error de `Connection Refused` o credenciales erróneas:
