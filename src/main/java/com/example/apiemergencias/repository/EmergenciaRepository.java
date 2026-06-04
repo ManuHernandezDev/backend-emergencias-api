@@ -1,9 +1,6 @@
 package com.example.apiemergencias.repository;
 
 import com.example.apiemergencias.model.EmergenciaConsolidada;
-import com.example.apiemergencias.projection.ProporcionNacionalProjection;
-import com.example.apiemergencias.projection.SaturacionEstadoProjection;
-import com.example.apiemergencias.projection.TendenciaHistoricaProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,44 +13,56 @@ import java.util.Map;
 @Repository
 public interface EmergenciaRepository extends JpaRepository<EmergenciaConsolidada, String> {
 
-    // KPI 1: Gráfica de Barras (Volumen por Estado)
-    @Query(value = "SELECT estado, SUM(total_emergencias) AS totalEmergencias " +
-            "FROM emergencias_nacionales_consolidado " +
-            "GROUP BY estado " +
-            "ORDER BY totalEmergencias DESC", nativeQuery = true)
-    List<SaturacionEstadoProjection> obtenerSaturacionPorEstado();
-
-    // KPI 2: Gráfica de Líneas (Tendencia Temporal)
-    @Query(value = "SELECT fecha, SUM(total_delitos) AS delitos, " +
-            "SUM(total_accidentes) AS accidentes " +
-            "FROM emergencias_nacionales_consolidado " +
-            "GROUP BY fecha " +
-            "ORDER BY fecha ASC", nativeQuery = true)
-    List<TendenciaHistoricaProjection> obtenerTendenciaHistorica();
-
-    // KPI 3: Gráfica de Pastel (Proporción Global)
-    @Query(value = "SELECT SUM(total_delitos) AS totalDelitos, " +
-            "SUM(total_accidentes) AS totalAccidentes " +
-            "FROM emergencias_nacionales_consolidado", nativeQuery = true)
-    ProporcionNacionalProjection obtenerProporcionNacional();
-
-    // KPI 4: Comparativa Interanual (Año vs Año Anterior)
+    // KPI 4: Comparativa Interanual
     @Query(value = "SELECT " +
             "COALESCE(SUM(CASE WHEN EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio THEN total_emergencias ELSE 0 END), 0) AS total_actual, " +
             "COALESCE(SUM(CASE WHEN EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio - 1 THEN total_emergencias ELSE 0 END), 0) AS total_anterior " +
             "FROM emergencias_nacionales_consolidado " +
             "WHERE (:estado IS NULL OR estado = :estado) " +
+            "AND (:trimestre IS NULL OR EXTRACT(QUARTER FROM CAST(fecha AS date)) = :trimestre) " +
             "AND EXTRACT(YEAR FROM CAST(fecha AS date)) IN (:anio, :anio - 1)", nativeQuery = true)
-    Map<String, BigDecimal> obtenerComparativaInteranual(@Param("anio") Integer anio, @Param("estado") String estado);
+    Map<String, BigDecimal> obtenerComparativaInteranual(@Param("anio") Integer anio, @Param("estado") String estado, @Param("trimestre") Integer trimestre);
 
-    // KPI 5: Días Críticos (Mapa de Calor)
+    // KPI 5: Días Críticos
     @Query(value = "SELECT " +
             "EXTRACT(ISODOW FROM CAST(fecha AS date)) AS dia_semana, " +
             "SUM(total_emergencias) AS total_emergencias " +
             "FROM emergencias_nacionales_consolidado " +
             "WHERE (:estado IS NULL OR estado = :estado) " +
             "AND (:anio IS NULL OR EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio) " +
+            "AND (:trimestre IS NULL OR EXTRACT(QUARTER FROM CAST(fecha AS date)) = :trimestre) " +
             "GROUP BY EXTRACT(ISODOW FROM CAST(fecha AS date)) " +
             "ORDER BY dia_semana", nativeQuery = true)
-    List<Map<String, Object>> obtenerDiasCriticos(@Param("estado") String estado, @Param("anio") Integer anio);
+    List<Map<String, Object>> obtenerDiasCriticos(@Param("estado") String estado, @Param("anio") Integer anio, @Param("trimestre") Integer trimestre);
+
+    // KPI 1: Saturación Geoespacial
+    @Query(value = "SELECT estado, SUM(total_emergencias) AS total_emergencias " +
+            "FROM emergencias_nacionales_consolidado " +
+            "WHERE (:estado IS NULL OR estado = :estado) " +
+            "AND (:anio IS NULL OR EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio) " +
+            "AND (:trimestre IS NULL OR EXTRACT(QUARTER FROM CAST(fecha AS date)) = :trimestre) " +
+            "GROUP BY estado " +
+            "ORDER BY total_emergencias DESC", nativeQuery = true)
+    List<Map<String, Object>> obtenerSaturacion(@Param("estado") String estado, @Param("anio") Integer anio, @Param("trimestre") Integer trimestre);
+
+    // KPI 2: Tendencia Histórica
+    @Query(value = "SELECT TO_CHAR(CAST(fecha AS date), 'YYYY-MM') AS mes, " +
+            "SUM(total_accidentes) AS accidentes_viales, " +
+            "SUM(total_delitos) AS delitos_registrados " +
+            "FROM emergencias_nacionales_consolidado " +
+            "WHERE (:estado IS NULL OR estado = :estado) " +
+            "AND (:anio IS NULL OR EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio) " +
+            "AND (:trimestre IS NULL OR EXTRACT(QUARTER FROM CAST(fecha AS date)) = :trimestre) " +
+            "GROUP BY TO_CHAR(CAST(fecha AS date), 'YYYY-MM') " +
+            "ORDER BY mes", nativeQuery = true)
+    List<Map<String, Object>> obtenerTendencia(@Param("estado") String estado, @Param("anio") Integer anio, @Param("trimestre") Integer trimestre);
+
+    // KPI 3: Proporción (Viales vs Delitos)
+    @Query(value = "SELECT COALESCE(SUM(total_accidentes), 0) AS total_accidentes, " +
+            "COALESCE(SUM(total_delitos), 0) AS total_delitos " +
+            "FROM emergencias_nacionales_consolidado " +
+            "WHERE (:estado IS NULL OR estado = :estado) " +
+            "AND (:anio IS NULL OR EXTRACT(YEAR FROM CAST(fecha AS date)) = :anio) " +
+            "AND (:trimestre IS NULL OR EXTRACT(QUARTER FROM CAST(fecha AS date)) = :trimestre)", nativeQuery = true)
+    Map<String, Object> obtenerProporcion(@Param("estado") String estado, @Param("anio") Integer anio, @Param("trimestre") Integer trimestre);
 }
